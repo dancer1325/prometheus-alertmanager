@@ -12,6 +12,17 @@
 * | browser,
   * http://localhost:9093/
 
+# handle deduplication
+* `alertmanager --config.file=promAlertManager.yml`
+* `chmod +x test_deduplication.sh`
+  * give rights
+* `./test_deduplication.sh`
+* | browser,
+  * http://localhost:9093/#/alerts
+    * check there is 1! alert
+
+# handle grouping
+
 # amtool
 * requirements
   * [install it](/prometheus-alertmanager/README.md)

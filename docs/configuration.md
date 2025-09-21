@@ -4,21 +4,28 @@ sort_rank: 3
 nav_icon: sliders
 ---
 
-[Alertmanager](https://github.com/prometheus/alertmanager) is configured via
-command-line flags and a configuration file.
-While the command-line flags configure immutable system parameters, the
-configuration file defines inhibition rules, notification routing and
-notification receivers.
+* [Alertmanager](https://github.com/prometheus/alertmanager)
+  * ways to configure
+    * -- via -- CL flags
+      * uses
+        * configure IMMUTABLE system parameters
+      * `alertmanager -h`
+        * ALL AVAILABLE CL's flags
+    * -- via -- configuration file
+      * uses
+        * inhibition rules
+        * notification routing
+        * notification receivers
+  * | runtime,
+    * reload its configuration,
+      * ways
+        * `kill -SIGHUP PROMETHEUS_ALERTMANAGER_PID`
+        * hit `/-/reload` endpoint
+      * if it's NOT well-formed -> changes NOT applied & error is logged
 
-The [visual editor](https://www.prometheus.io/webtools/alerting/routing-tree-editor)
-can assist in building routing trees.
-
-To view all available command-line flags, run `alertmanager -h`.
-
-Alertmanager can reload its configuration at runtime. If the new configuration
-is not well-formed, the changes will not be applied and an error is logged.
-A configuration reload is triggered by sending a `SIGHUP` to the process or
-sending an HTTP POST request to the `/-/reload` endpoint.
+* [Alertmanager Routing Tree Editor](https://www.prometheus.io/webtools/alerting/routing-tree-editor)
+  * allows you,
+    * building routing trees
 
 ## Limits
 
