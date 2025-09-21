@@ -22,20 +22,15 @@
     * ALLOWED ones
       * those ones / configured | Alertmanager's yaml configuration file
     * ?receiver=ReceiverConfiguredName
-
-Filtering based on label matchers is available. They can easily be added and
-modified through the UI.
-
-```
-http://alertmanager/#/alerts?filter=%7Bseverity%3D%22warning%22%2C%20owner%3D%22backend%22%7D
-```
-
-These filters can be used in conjunction.
+  * filtering
+    * -- based on -- label matchers
+    * ?filter=%7Bseverity%3D%22warning%22
+      * URL encoded
 
 ### Filtering | silences page
 
-Filtering based on label matchers is available. They can easily be added and
-modified through the UI.
+Filtering based on label matchers is available
+They can easily be added and modified through the UI.
 
 ```
 http://alertmanager/#/silences?filter=%7Bseverity%3D%22warning%22%2C%20owner%3D%22backend%22%7D
