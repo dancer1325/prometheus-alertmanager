@@ -22,6 +22,14 @@
     * check there is 1! alert
 
 # handle grouping
+* `alertmanager --config.file=alertmanager-grouping.yml`
+* `chmod +x test_grouping.sh`
+    * give rights
+* `./test_grouping.sh`
+* | browser,
+    * http://localhost:9093/#/alerts
+        * check there is 1! alert
+
 
 # amtool
 * requirements

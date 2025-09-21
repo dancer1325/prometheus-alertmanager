@@ -23,9 +23,146 @@ nav_icon: sliders
         * hit `/-/reload` endpoint
       * if it's NOT well-formed -> changes NOT applied & error is logged
 
-* [Alertmanager Routing Tree Editor](https://www.prometheus.io/webtools/alerting/routing-tree-editor)
-  * allows you,
-    * building routing trees
+## Configuration file introduction
+
+* `--config.file=AlertManagerFilePath`
+  * == CL's flag
+
+* == [YAML format](http://en.wikipedia.org/wiki/YAML)
+  * 's schema
+
+    ```yaml
+    global:
+      # The default SMTP From header field.
+      [ smtp_from: <tmpl_string> ]
+      # The default SMTP smarthost used for sending emails, including port number.
+      # Port number usually is 25, or 587 for SMTP over TLS (sometimes referred to as STARTTLS).
+      # Example: smtp.example.org:587
+      [ smtp_smarthost: <string> ]
+      # The default hostname to identify to the SMTP server.
+      [ smtp_hello: <string> | default = "localhost" ]
+      # SMTP Auth using CRAM-MD5, LOGIN and PLAIN. If empty, Alertmanager doesn't authenticate to the SMTP server.
+      [ smtp_auth_username: <string> ]
+      # SMTP Auth using LOGIN and PLAIN.
+      [ smtp_auth_password: <secret> ]
+      # SMTP Auth using LOGIN and PLAIN.
+      [ smtp_auth_password_file: <string> ]
+      # SMTP Auth using PLAIN.
+      [ smtp_auth_identity: <string> ]
+      # SMTP Auth using CRAM-MD5.
+      [ smtp_auth_secret: <secret> ]
+      # The default SMTP TLS requirement.
+      # Note that Go does not support unencrypted connections to remote SMTP endpoints.
+      [ smtp_require_tls: <bool> | default = true ]
+      # The default TLS configuration for SMTP receivers
+      [ smtp_tls_config: <tls_config> ]
+    
+      # Default settings for the JIRA integration.
+      [ jira_api_url: <string> ]
+    
+      # The API URL to use for Slack notifications.
+      [ slack_api_url: <secret> ]
+      [ slack_api_url_file: <filepath> ]
+      [ victorops_api_key: <secret> ]
+      [ victorops_api_key_file: <filepath> ]
+      [ victorops_api_url: <string> | default = "https://alert.victorops.com/integrations/generic/20131114/alert/" ]
+      [ pagerduty_url: <string> | default = "https://events.pagerduty.com/v2/enqueue" ]
+      [ opsgenie_api_key: <secret> ]
+      [ opsgenie_api_key_file: <filepath> ]
+      [ opsgenie_api_url: <string> | default = "https://api.opsgenie.com/" ]
+      [ rocketchat_api_url: <string> | default = "https://open.rocket.chat/" ]
+      [ rocketchat_token: <secret> ]
+      [ rocketchat_token_file: <filepath> ]
+      [ rocketchat_token_id: <secret> ]
+      [ rocketchat_token_id_file: <filepath> ]
+      [ wechat_api_url: <string> | default = "https://qyapi.weixin.qq.com/cgi-bin/" ]
+      [ wechat_api_secret: <secret> ]
+      [ wechat_api_corp_id: <string> ]
+      [ telegram_api_url: <string> | default = "https://api.telegram.org" ]
+      [ webex_api_url: <string> | default = "https://webexapis.com/v1/messages" ]
+      # The default HTTP client configuration
+      [ http_config: <http_config> ]
+    
+      # ResolveTimeout is the default value used by alertmanager if the alert does
+      # not include EndsAt, after this time passes it can declare the alert as resolved if it has not been updated.
+      # This has no impact on alerts from Prometheus, as they always include EndsAt.
+      [ resolve_timeout: <duration> | default = 5m ]
+    
+    # Files from which custom notification template definitions are read.
+    # The last component may use a wildcard matcher, e.g. 'templates/*.tmpl'.
+    templates:
+      [ - <filepath> ... ]
+    
+    # The root node of the routing tree.
+    route: <route>
+    
+    # A list of notification receivers.
+    receivers:
+      - <receiver> ...
+    
+    # A list of inhibition rules.
+    inhibit_rules:
+      [ - <inhibit_rule> ... ]
+    
+    # DEPRECATED: use time_intervals below.
+    # A list of mute time intervals for muting routes.
+    mute_time_intervals:
+      [ - <mute_time_interval> ... ]
+    
+    # A list of time intervals for muting/activating routes.
+    time_intervals:
+      [ - <time_interval> ... ]
+    ```
+
+  * `global`
+    * parameters /
+      * 👀valid | ALL OTHER configuration contexts👀
+    * == defaults -- for -- OTHER configuration sections
+  * `[]`
+    * == OPTIONAL
+  * if non-list parameters are NOT specified -> set the specified default
+
+* generic placeholders
+    * `<boolean>`
+    * `<duration>`
+      * restrictions
+        * `((([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?|0)`
+        * _Examples:_
+          * `1d`
+          * `1h30m`
+          * `5m`
+          * `10s`
+    * `<int>`
+    * `<labelname>`
+      * == string /
+        * `[a-zA-Z_][a-zA-Z0-9_]*`
+          * if there is another unsupported character -> should be converted -- to an -- `_`
+            * _Example:_ label `app.kubernetes.io/name` -- should be written as -- `app_kubernetes_io_name`
+    * `<labelvalue>`
+      * == string of unicode characters
+    * `<filepath>`
+      * valid URL path
+    * `<secret>`
+      * == regular string / secret
+        * _Example:_ password
+    * `<string>`
+    * `<tmpl_string>`
+      * == string /
+        * BEFORE usage, template-expanded
+    * `<tmpl_secret>`
+      * == string /
+        * BEFORE usage, template-expanded  
+    * `<regex>`
+      * == valid [RE2 regular expression](https://github.com/google/re2/wiki/Syntax)
+      * ⚠️regex is anchored | begin & ends⚠️
+        * _Example:_ 
+          ```yaml
+          matchers:
+            - job="web"
+            # 1. ONLY matches with EXPLICITLY "web"
+            # NOT match with "my-web", nor "web-app"
+          ```
+      * if you want to un-anchor -> use `.*<regex>.*`
 
 ## Limits
 
@@ -38,253 +175,141 @@ where the unit is in bytes.
 
 Both limits are disabled by default.
 
-## Configuration file introduction
-
-To specify which configuration file to load, use the `--config.file` flag.
-
-```bash
-./alertmanager --config.file=alertmanager.yml
-```
-
-The file is written in the [YAML format](http://en.wikipedia.org/wiki/YAML),
-defined by the scheme described below.
-Brackets indicate that a parameter is optional. For non-list parameters the
-value is set to the specified default.
-
-Generic placeholders are defined as follows:
-
-* `<duration>`: a duration matching the regular expression `((([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?|0)`, e.g. `1d`, `1h30m`, `5m`, `10s`
-* `<labelname>`: a string matching the regular expression `[a-zA-Z_][a-zA-Z0-9_]*`
-* `<labelvalue>`: a string of unicode characters
-* `<filepath>`: a valid path in the current working directory
-* `<boolean>`: a boolean that can take the values `true` or `false`
-* `<string>`: a regular string
-* `<secret>`: a regular string that is a secret, such as a password
-* `<tmpl_string>`: a string which is template-expanded before usage
-* `<tmpl_secret>`: a string which is template-expanded before usage that is a secret
-* `<int>`: an integer value
-* `<regex>`: any valid [RE2 regular expression](https://github.com/google/re2/wiki/Syntax) (The regex is anchored on both ends. To un-anchor the regex, use `.*<regex>.*`.)
-
-The other placeholders are specified separately.
-
-A provided [valid example file](https://github.com/prometheus/alertmanager/blob/main/doc/examples/simple.yml)
-shows usage in context.
-
-## File layout and global settings
-
-The global configuration specifies parameters that are valid in all other
-configuration contexts. They also serve as defaults for other configuration
-sections. The other top-level sections are documented below on this page.
-
-```yaml
-global:
-  # The default SMTP From header field.
-  [ smtp_from: <tmpl_string> ]
-  # The default SMTP smarthost used for sending emails, including port number.
-  # Port number usually is 25, or 587 for SMTP over TLS (sometimes referred to as STARTTLS).
-  # Example: smtp.example.org:587
-  [ smtp_smarthost: <string> ]
-  # The default hostname to identify to the SMTP server.
-  [ smtp_hello: <string> | default = "localhost" ]
-  # SMTP Auth using CRAM-MD5, LOGIN and PLAIN. If empty, Alertmanager doesn't authenticate to the SMTP server.
-  [ smtp_auth_username: <string> ]
-  # SMTP Auth using LOGIN and PLAIN.
-  [ smtp_auth_password: <secret> ]
-  # SMTP Auth using LOGIN and PLAIN.
-  [ smtp_auth_password_file: <string> ]
-  # SMTP Auth using PLAIN.
-  [ smtp_auth_identity: <string> ]
-  # SMTP Auth using CRAM-MD5.
-  [ smtp_auth_secret: <secret> ]
-  # The default SMTP TLS requirement.
-  # Note that Go does not support unencrypted connections to remote SMTP endpoints.
-  [ smtp_require_tls: <bool> | default = true ]
-  # The default TLS configuration for SMTP receivers
-  [ smtp_tls_config: <tls_config> ]
-
-  # Default settings for the JIRA integration.
-  [ jira_api_url: <string> ]
-
-  # The API URL to use for Slack notifications.
-  [ slack_api_url: <secret> ]
-  [ slack_api_url_file: <filepath> ]
-  [ victorops_api_key: <secret> ]
-  [ victorops_api_key_file: <filepath> ]
-  [ victorops_api_url: <string> | default = "https://alert.victorops.com/integrations/generic/20131114/alert/" ]
-  [ pagerduty_url: <string> | default = "https://events.pagerduty.com/v2/enqueue" ]
-  [ opsgenie_api_key: <secret> ]
-  [ opsgenie_api_key_file: <filepath> ]
-  [ opsgenie_api_url: <string> | default = "https://api.opsgenie.com/" ]
-  [ rocketchat_api_url: <string> | default = "https://open.rocket.chat/" ]
-  [ rocketchat_token: <secret> ]
-  [ rocketchat_token_file: <filepath> ]
-  [ rocketchat_token_id: <secret> ]
-  [ rocketchat_token_id_file: <filepath> ]
-  [ wechat_api_url: <string> | default = "https://qyapi.weixin.qq.com/cgi-bin/" ]
-  [ wechat_api_secret: <secret> ]
-  [ wechat_api_corp_id: <string> ]
-  [ telegram_api_url: <string> | default = "https://api.telegram.org" ]
-  [ webex_api_url: <string> | default = "https://webexapis.com/v1/messages" ]
-  # The default HTTP client configuration
-  [ http_config: <http_config> ]
-
-  # ResolveTimeout is the default value used by alertmanager if the alert does
-  # not include EndsAt, after this time passes it can declare the alert as resolved if it has not been updated.
-  # This has no impact on alerts from Prometheus, as they always include EndsAt.
-  [ resolve_timeout: <duration> | default = 5m ]
-
-# Files from which custom notification template definitions are read.
-# The last component may use a wildcard matcher, e.g. 'templates/*.tmpl'.
-templates:
-  [ - <filepath> ... ]
-
-# The root node of the routing tree.
-route: <route>
-
-# A list of notification receivers.
-receivers:
-  - <receiver> ...
-
-# A list of inhibition rules.
-inhibit_rules:
-  [ - <inhibit_rule> ... ]
-
-# DEPRECATED: use time_intervals below.
-# A list of mute time intervals for muting routes.
-mute_time_intervals:
-  [ - <mute_time_interval> ... ]
-
-# A list of time intervals for muting/activating routes.
-time_intervals:
-  [ - <time_interval> ... ]
-```
-
 ## Route-related settings
 
-Routing-related settings allow configuring how alerts are routed, aggregated, throttled, and muted based on time.
+* allow
+  * configuring, how alerts -- based on time, -- are 
+    * routed,
+    * aggregated,
+    * throttled,
+    * muted
 
 ### `<route>`
 
-A route block defines a node in a routing tree and its children. Its optional
-configuration parameters are inherited from its parent node if not set.
+* route block
+  * == node | routing tree + its children
+  * if OPTIONAL configuration parameters are NOT set | children -> inherited -- from -- its parent node
+  * 's syntax
 
-Every alert enters the routing tree at the configured top-level route, which
-must match all alerts (i.e. not have any configured matchers).
-It then traverses the child nodes. If `continue` is set to false, it stops
-after the first matching child. If `continue` is true on a matching node, the
-alert will continue matching against subsequent siblings.
-If an alert does not match any children of a node (no matching child nodes, or
-none exist), the alert is handled based on the configuration parameters of the
-current node.
+    ```yaml
+    [ receiver: <string> ]
+    
+    # The labels by which incoming alerts are grouped together. For example,
+    # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+    # be batched into a single group.
+    #
+    # To aggregate by all possible labels use the special value '...' as the sole label name, for example:
+    # group_by: ['...']
+    # This effectively disables aggregation entirely, passing through all
+    # alerts as-is. This is unlikely to be what you want, unless you have
+    # a very low alert volume or your upstream notification system performs
+    # its own grouping.
+    [ group_by: '[' <labelname>, ... ']' ]
+    
+    # Whether an alert should continue matching subsequent sibling nodes.
+    [ continue: <boolean> | default = false ]
+    
+    # DEPRECATED: Use matchers below.
+    # A set of equality matchers an alert has to fulfill to match the node.
+    match:
+      [ <labelname>: <labelvalue>, ... ]
+    
+    # DEPRECATED: Use matchers below.
+    # A set of regex-matchers an alert has to fulfill to match the node.
+    match_re:
+      [ <labelname>: <regex>, ... ]
+    
+    # A list of matchers that an alert has to fulfill to match the node.
+    matchers:
+      [ - <matcher> ... ]
+    
+    # How long to wait before sending the first notification for a new group of
+    # alerts. Allows to wait for alerts to arrive from other rule groups or
+    # Prometheus servers, and for one or more inhibiting alerts to arrive and mute
+    # any target alerts before the first notification.
+    #
+    # A short group_wait will reduce the time to wait before sending the first
+    # notification for a new group of alerts. However, if group_wait is too short
+    # then the first notification might not contain the complete set of expected
+    # alerts, and alerts that should be inhibited might not be inhibited if the
+    # inhibiting alerts have not arrived in time.
+    #
+    # A long group_wait will increase the time to wait before sending the first
+    # notification for a new group of alerts. However, if group_wait is too long
+    # then notifications for firing alerts might not be sent within a reasonable
+    # time.
+    #
+    # If an alert is resolved before group_wait has elapsed, no notification will
+    # be sent for that alert. This reduces noise of flapping alerts.
+    
+    # A notification for any alerts that missed the initial group_wait will be
+    # sent at the next group_interval instead.
+    #
+    # If omitted, child routes inherit the group_wait of the parent route.
+    [ group_wait: <duration> | default = 30s ]
+    
+    # How long to wait before sending subsequent notifications for an existing
+    # group of alerts after group_wait.
+    #
+    # The group_interval is a recurring timer that starts as soon as group_wait
+    # has elapsed. At each group_interval, Alertmanager checks if any new alerts
+    # have fired or any firing alerts have resolved since the last group_interval,
+    # and if they have a notification is sent. If they haven't, Alertmanager checks
+    # if the repeat_interval has elapsed instead.
+    #
+    # If omitted, child routes inherit the group_interval of the parent route.
+    [ group_interval: <duration> | default = 5m ]
+    
+    # How long to wait before repeating the last notification. Notifications are
+    # not repeated if any new alerts have fired or any firing alerts have resolved
+    # since the last group_interval.
+    #
+    # Since the repeat_interval is checked after each group_interval, it should
+    # be a multiple of the group_interval. If it's not, the repeat_interval
+    # is rounded up to the next multiple of the group_interval.
+    #
+    # In addition, if repeat_interval is longer then `--data.retention`, the
+    # notification will be repeated at the end of the data retention period
+    # instead.
+    #
+    # If omitted, child routes inherit the repeat_interval of the parent route.
+    [ repeat_interval: <duration> | default = 4h ]
+    
+    # Times when the route should be muted. These must match the name of a
+    # time interval defined in the time_intervals section.
+    # Additionally, the root node cannot have any mute times.
+    # When a route is muted it will not send any notifications, but
+    # otherwise acts normally (including ending the route-matching process
+    # if the `continue` option is not set.)
+    mute_time_intervals:
+      [ - <string> ...]
+    
+    # Times when the route should be active. These must match the name of a
+    # time interval defined in the time_intervals section. An empty value
+    # means that the route is always active.
+    # Additionally, the root node cannot have any active times.
+    # The route will send notifications only when active, but otherwise
+    # acts normally (including ending the route-matching process
+    # if the `continue` option is not set).
+    active_time_intervals:
+      [ - <string> ...]
+    
+    # >=0 child routes
+    routes:
+      [ - <route> ... ]
+    ```
 
-See [Alertmanager concepts](https://prometheus.io/docs/alerting/alertmanager/#grouping) for more information on grouping.
+* steps / any alert follows | check `<route>`
+  * enters the routing tree | top-level route 
+    * top-level route's requirements
+      * ❌NOT have `matchers`❌
+  * traverses the child nodes
+  * if `continue`
+    * `false` -> ⚠️AFTER FIRST matching child, stops⚠️
+    * `true` -> alert continue matching against SUBSEQUENT siblings
+  * if an alert does NOT match any node's children -> alert is handled -- based on the -- CURRENT node's configuration parameters
 
-```yaml
-[ receiver: <string> ]
-# The labels by which incoming alerts are grouped together. For example,
-# multiple alerts coming in for cluster=A and alertname=LatencyHigh would
-# be batched into a single group.
-#
-# To aggregate by all possible labels use the special value '...' as the sole label name, for example:
-# group_by: ['...']
-# This effectively disables aggregation entirely, passing through all
-# alerts as-is. This is unlikely to be what you want, unless you have
-# a very low alert volume or your upstream notification system performs
-# its own grouping.
-[ group_by: '[' <labelname>, ... ']' ]
-
-# Whether an alert should continue matching subsequent sibling nodes.
-[ continue: <boolean> | default = false ]
-
-# DEPRECATED: Use matchers below.
-# A set of equality matchers an alert has to fulfill to match the node.
-match:
-  [ <labelname>: <labelvalue>, ... ]
-
-# DEPRECATED: Use matchers below.
-# A set of regex-matchers an alert has to fulfill to match the node.
-match_re:
-  [ <labelname>: <regex>, ... ]
-
-# A list of matchers that an alert has to fulfill to match the node.
-matchers:
-  [ - <matcher> ... ]
-
-# How long to wait before sending the first notification for a new group of
-# alerts. Allows to wait for alerts to arrive from other rule groups or
-# Prometheus servers, and for one or more inhibiting alerts to arrive and mute
-# any target alerts before the first notification.
-#
-# A short group_wait will reduce the time to wait before sending the first
-# notification for a new group of alerts. However, if group_wait is too short
-# then the first notification might not contain the complete set of expected
-# alerts, and alerts that should be inhibited might not be inhibited if the
-# inhibiting alerts have not arrived in time.
-#
-# A long group_wait will increase the time to wait before sending the first
-# notification for a new group of alerts. However, if group_wait is too long
-# then notifications for firing alerts might not be sent within a reasonable
-# time.
-#
-# If an alert is resolved before group_wait has elapsed, no notification will
-# be sent for that alert. This reduces noise of flapping alerts.
-
-# A notification for any alerts that missed the initial group_wait will be
-# sent at the next group_interval instead.
-#
-# If omitted, child routes inherit the group_wait of the parent route.
-[ group_wait: <duration> | default = 30s ]
-
-# How long to wait before sending subsequent notifications for an existing
-# group of alerts after group_wait.
-#
-# The group_interval is a recurring timer that starts as soon as group_wait
-# has elapsed. At each group_interval, Alertmanager checks if any new alerts
-# have fired or any firing alerts have resolved since the last group_interval,
-# and if they have a notification is sent. If they haven't, Alertmanager checks
-# if the repeat_interval has elapsed instead.
-#
-# If omitted, child routes inherit the group_interval of the parent route.
-[ group_interval: <duration> | default = 5m ]
-
-# How long to wait before repeating the last notification. Notifications are
-# not repeated if any new alerts have fired or any firing alerts have resolved
-# since the last group_interval.
-#
-# Since the repeat_interval is checked after each group_interval, it should
-# be a multiple of the group_interval. If it's not, the repeat_interval
-# is rounded up to the next multiple of the group_interval.
-#
-# In addition, if repeat_interval is longer then `--data.retention`, the
-# notification will be repeated at the end of the data retention period
-# instead.
-#
-# If omitted, child routes inherit the repeat_interval of the parent route.
-[ repeat_interval: <duration> | default = 4h ]
-
-# Times when the route should be muted. These must match the name of a
-# time interval defined in the time_intervals section.
-# Additionally, the root node cannot have any mute times.
-# When a route is muted it will not send any notifications, but
-# otherwise acts normally (including ending the route-matching process
-# if the `continue` option is not set.)
-mute_time_intervals:
-  [ - <string> ...]
-
-# Times when the route should be active. These must match the name of a
-# time interval defined in the time_intervals section. An empty value
-# means that the route is always active.
-# Additionally, the root node cannot have any active times.
-# The route will send notifications only when active, but otherwise
-# acts normally (including ending the route-matching process
-# if the `continue` option is not set).
-active_time_intervals:
-  [ - <string> ...]
-
-# Zero or more child routes.
-routes:
-  [ - <route> ... ]
-```
+* [Alertmanager's grouping](https://prometheus.io/docs/alerting/alertmanager/#grouping)
 
 #### Example
 
@@ -726,52 +751,56 @@ Here are some more examples:
 
 ## General receiver-related settings
 
-These receiver settings allow configuring notification destinations (receivers) and HTTP client options for HTTP-based receivers.
+* allow
+  * configuring
+    * receivers
+      * == notification destinations 
+    * HTTP-based receivers' HTTP client options 
 
 ### `<receiver>`
 
-Receiver is a named configuration of one or more notification integrations.
+* Receiver
+  * == >=1 notification integrations' named configuration 
+  * syntax
 
-Note: As part of lifting the past moratorium on new receivers it was agreed that, in addition to the existing requirements, new notification integrations will be required to have a committed maintainer with push access.
-
-```yaml
-# The unique name of the receiver.
-name: <string>
-
-# Configurations for several notification integrations.
-discord_configs:
-  [ - <discord_config>, ... ]
-email_configs:
-  [ - <email_config>, ... ]
-msteams_configs:
-  [ - <msteams_config>, ... ]
-msteamsv2_configs:
-  [ - <msteamsv2_config>, ... ]
-jira_configs:
-  [ - <jira_config>, ... ]
-opsgenie_configs:
-  [ - <opsgenie_config>, ... ]
-pagerduty_configs:
-  [ - <pagerduty_config>, ... ]
-pushover_configs:
-  [ - <pushover_config>, ... ]
-rocketchat_configs:
-  [ - <rocketchat_config>, ... ]
-slack_configs:
-  [ - <slack_config>, ... ]
-sns_configs:
-  [ - <sns_config>, ... ]
-telegram_configs:
-  [ - <telegram_config>, ... ]
-victorops_configs:
-  [ - <victorops_config>, ... ]
-webex_configs:
-  [ - <webex_config>, ... ]
-webhook_configs:
-  [ - <webhook_config>, ... ]
-wechat_configs:
-  [ - <wechat_config>, ... ]
-```
+    ```yaml
+    # The unique name of the receiver.
+    name: <string>
+    
+    # Configurations for several notification integrations.
+    discord_configs:
+      [ - <discord_config>, ... ]
+    email_configs:
+      [ - <email_config>, ... ]
+    msteams_configs:
+      [ - <msteams_config>, ... ]
+    msteamsv2_configs:
+      [ - <msteamsv2_config>, ... ]
+    jira_configs:
+      [ - <jira_config>, ... ]
+    opsgenie_configs:
+      [ - <opsgenie_config>, ... ]
+    pagerduty_configs:
+      [ - <pagerduty_config>, ... ]
+    pushover_configs:
+      [ - <pushover_config>, ... ]
+    rocketchat_configs:
+      [ - <rocketchat_config>, ... ]
+    slack_configs:
+      [ - <slack_config>, ... ]
+    sns_configs:
+      [ - <sns_config>, ... ]
+    telegram_configs:
+      [ - <telegram_config>, ... ]
+    victorops_configs:
+      [ - <victorops_config>, ... ]
+    webex_configs:
+      [ - <webex_config>, ... ]
+    webhook_configs:
+      [ - <webhook_config>, ... ]
+    wechat_configs:
+      [ - <wechat_config>, ... ]
+    ```
 
 ### `<http_config>`
 
@@ -912,9 +941,10 @@ A `tls_config` allows configuring TLS connections.
 [ max_version: <string> ]
 ```
 
-## Receiver integration settings
+## Receiver (`receiver`) integration settings 
 
-These settings allow configuring specific receiver integrations.
+* allow
+  * configuring specific receiver integrations
 
 ### `<discord_config>`
 

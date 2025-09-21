@@ -1,29 +1,27 @@
 # Alertmanager UI
 
-This is a re-write of the Alertmanager UI in [elm-lang](http://elm-lang.org/).
+* == Alertmanager UI's re-write 
+  * | [elm-lang](http://elm-lang.org/)
 
 ## Usage
 
-### Filtering on the alerts page
+### Filtering | alerts page
 
-By default, the alerts page only shows active (not silenced) alerts. Adding a
-query string containing the following will additionally show silenced alerts.
-
-```
-http://alertmanager/#/alerts?silenced=true
-```
-
-In order to show _only_ silenced alerts, update the query string to hide active alerts.
-```
-http://alertmanager/#/alerts?silenced=true&active=false
-```
-
-The alerts page can also be filtered by the receivers for a page. Receivers are
-configured in Alertmanager's yaml configuration file.
-
-```
-http://alertmanager/#/alerts?receiver=backend
-```
+* alert
+  * 's status
+    * ALLOWED ones
+      * active
+        * by default
+      * silenced
+        * ?silenced=true
+      * inhibited
+        * ?inhibited=true
+      * muted
+        * ?muted=true
+  * 's receivers
+    * ALLOWED ones
+      * those ones / configured | Alertmanager's yaml configuration file
+    * ?receiver=ReceiverConfiguredName
 
 Filtering based on label matchers is available. They can easily be added and
 modified through the UI.
@@ -34,7 +32,7 @@ http://alertmanager/#/alerts?filter=%7Bseverity%3D%22warning%22%2C%20owner%3D%22
 
 These filters can be used in conjunction.
 
-### Filtering on the silences page
+### Filtering | silences page
 
 Filtering based on label matchers is available. They can easily be added and
 modified through the UI.
@@ -43,7 +41,7 @@ modified through the UI.
 http://alertmanager/#/silences?filter=%7Bseverity%3D%22warning%22%2C%20owner%3D%22backend%22%7D
 ```
 
-### Note on filtering via label matchers
+### Filtering -- via -- label matchers
 
 Filtering via label matchers follows the same syntax and semantics as Prometheus.
 

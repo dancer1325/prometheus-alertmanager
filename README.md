@@ -8,6 +8,10 @@
           * == remove duplicated alerts
           * Reason:🧠avoid processing >1 SAME alert🧠
         * grouping,
+          * == combine MULTIPLE alerts | 1! group
+          * Reason:🧠
+            * avoid duplicate alerts
+            * make easier the management🧠
         * routing them -- to the -- correct [receiver integrations](https://prometheus.io/docs/alerting/latest/configuration/#receiver)
           * _Example:_ email, PagerDuty, OpsGenie, OR [OTHERS](https://prometheus.io/docs/operating/integrations/#alertmanager-webhook-receiver)
         * silence
