@@ -49,10 +49,10 @@ nav_icon: sliders
   * way to configure
     * -- via -- CL's flag [--cluster-*](https://github.com/prometheus/alertmanager#high-availability)
     
-![](static/correctHA.png)
+    ![](static/correctHA.png)
 
 * recommendations
   * ❌NOT set dedicated load balancer❌
     * Reason:🧠Prometheus Alertmanager does NOT handle fine the alerts🧠
 
-![](static/incorrectHA.png)
+    ![](static/incorrectHA.png)
