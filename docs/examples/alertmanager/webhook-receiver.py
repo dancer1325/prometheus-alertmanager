@@ -18,7 +18,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
             print(f"  Name: {alert['labels']['alertname']}")
             print(f"  Instance: {alert['labels'].get('instance', 'N/A')}")
             print(f"  Service: {alert['labels'].get('service', 'N/A')}")
-            print(f"  Summary: {alert['annotations'].get('summary', 'N/A')}")
+            print(f"  Cluster: {alert['labels'].get('cluster', 'N/A')}")
         
         print("=" * 30)
         

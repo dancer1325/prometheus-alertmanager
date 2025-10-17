@@ -20,6 +20,7 @@ nav_icon: sliders
 
 * Inhibition
   * 💡if OTHER alerts are ALREADY fired -> suppress notifications / certain alerts 💡
+    * == mute alertS -- based on the -- presence of another alertS
   * _Example:_ alert is fired / entire cluster is NOT reachable
     * -> mute ALL OTHER alerts
   * use cases

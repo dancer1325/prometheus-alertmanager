@@ -449,18 +449,15 @@ environment variable.
 
 ## Inhibition-related settings
 
-Inhibition allows muting a set of alerts based on the presence of another set of
-alerts. This allows establishing dependencies between systems or services such that
-only the most relevant of a set of interconnected alerts are sent out during an outage.
-
-See [Alertmanager concepts](https://prometheus.io/docs/alerting/alertmanager/#inhibition) for more information on inhibition.
+* [Inhibition](alertmanager.md#inhibition)
 
 ### `<inhibit_rule>`
 
-An inhibition rule mutes an alert (target) matching a set of matchers
-when an alert (source) exists that matches another set of matchers.
-Both target and source alerts must have the same label values
-for the label names in the `equal` list.
+* inhibition rule
+  * mutes an alert (target) matching a set of matchers
+  when an alert (source) exists that matches another set of matchers.
+  Both target and source alerts must have the same label values
+  for the label names in the `equal` list.
 
 Semantically, a missing label and a label with an empty value are the same
 thing. Therefore, if all the label names listed in `equal` are missing from
@@ -473,35 +470,36 @@ source matchers in a way that alerts never match both sides. It is much easier
 to reason about and does not trigger this special case.
 
 ```yaml
-# DEPRECATED: Use target_matchers below.
-# Matchers that have to be fulfilled in the alerts to be muted.
-target_match:
-  [ <labelname>: <labelvalue>, ... ]
-# DEPRECATED: Use target_matchers below.
-target_match_re:
-  [ <labelname>: <regex>, ... ]
-
-# A list of matchers that have to be fulfilled by the target
-# alerts to be muted.
-target_matchers:
-  [ - <matcher> ... ]
-
-# DEPRECATED: Use source_matchers below.
-# Matchers for which one or more alerts have to exist for the
-# inhibition to take effect.
+# 1. alert source
+#     == alert / can inhibit
+# ⚠️DEPRECATED⚠️
+#     replaced -- by -- source_matchers 
 source_match:
   [ <labelname>: <labelvalue>, ... ]
-# DEPRECATED: Use source_matchers below.
+# ⚠️DEPRECATED⚠️
+#     replaced -- by -- source_matchers
 source_match_re:
   [ <labelname>: <regex>, ... ]
 
-# A list of matchers for which one or more alerts have
-# to exist for the inhibition to take effect.
 source_matchers:
   [ - <matcher> ... ]
 
-# Labels that must have an equal value in the source and target
-# alert for the inhibition to take effect.
+# 2. alert target
+#     == alert / can be inhibited
+# ⚠️DEPRECATED⚠️
+#     replaced -- by -- target_matchers
+target_match:
+  [ <labelname>: <labelvalue>, ... ]
+# ⚠️DEPRECATED⚠️ 
+#     replaced -- by -- target_matchers
+target_match_re:
+  [ <labelname>: <regex>, ... ]
+
+target_matchers:
+  [ - <matcher> ... ]
+
+# 3. 
+# labels / source alert's labelS' value == target alert's labelS' value
 [ equal: '[' <labelname>, ... ']' ]
 ```
 
