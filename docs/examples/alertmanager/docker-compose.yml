@@ -9,7 +9,10 @@ services:
       # - ./alertmanager-grouping-demo.yml:/etc/alertmanager/alertmanager.yml
 
       # 2. Inhibition
-      - ./alertmanager-inhibition-demo.yml:/etc/alertmanager/alertmanager.yml
+      #- ./alertmanager-inhibition-demo.yml:/etc/alertmanager/alertmanager.yml
+
+      # 3. Silence
+      - ./alertmanager-silenece-demo.yml:/etc/alertmanager/alertmanager.yml
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
