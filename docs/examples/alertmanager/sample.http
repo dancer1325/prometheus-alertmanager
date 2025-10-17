@@ -1,0 +1,11 @@
+### POST
+POST {{ALERTMANAGER_HOST}}/api/v2/alerts
+Content-Type: application/json
+
+[
+  {"labels": {"alertname": "HighCPU", "instance": "server1", "service": "web", "cluster": "production"}},
+  {"labels": {"alertname": "HighCPU", "instance": "server2", "service": "web", "cluster": "production"}},
+  {"labels": {"alertname": "HighCPU", "instance": "server3", "service": "web", "cluster": "production"}}
+]
+
+###

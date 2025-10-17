@@ -10,8 +10,7 @@ nav_icon: sliders
 ## Grouping
 
 * Grouping
-  * 💡alerts' SIMILAR nature -> fire 1! notification💡 /
-    * ALL information is displayed
+  * 💡alerts' SIMILAR nature -> fire 1! notification💡 / ALL information is displayed
   * use cases
     * larger outages / MANY systems fail -> hundreds to thousands of alerts are fired SIMULTANEOUSLY
   * way to configure
