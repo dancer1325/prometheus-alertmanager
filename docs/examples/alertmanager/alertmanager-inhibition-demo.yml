@@ -1,0 +1,28 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alertmanager@example.org'
+
+route:
+  group_by: ['alertname']
+  group_wait: 5s
+  group_interval: 5s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+
+inhibit_rules:
+- source_match:
+    alertname: ClusterDown
+  target_match:
+    alertname: InstanceDown
+  equal: ['cluster']
+
+- source_match:
+    alertname: DatacenterOutage
+  target_match_re:
+    alertname: (ClusterDown|InstanceDown|ServiceDown)
+  equal: ['datacenter']
+
+receivers:
+- name: 'web.hook'
+  webhook_configs:
+  - url: 'http://host.docker.internal:5001/'

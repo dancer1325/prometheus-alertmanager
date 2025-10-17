@@ -1,0 +1,15 @@
+services:
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      # 1. Grouping
+      # - ./alertmanager-grouping-demo.yml:/etc/alertmanager/alertmanager.yml
+
+      # 2. Inhibition
+      - ./alertmanager-inhibition-demo.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
