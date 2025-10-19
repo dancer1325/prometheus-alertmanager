@@ -74,3 +74,5 @@ expected to re-send resolved alerts to the Alertmanager for up to 5 minutes
 after the alert has resolved. As the Alertmanager is stateless, this ensures
 that a resolved notification is sent even if the Alertmanager crashes or is
 restarted.
+
+* [core API](/prometheus-alertmanager/api/v2/openapi.yaml)

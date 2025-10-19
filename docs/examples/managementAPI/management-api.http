@@ -1,0 +1,25 @@
+### Health Check - GET
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/-/healthy
+Accept: application/json
+
+###
+
+### Health Check - HEAD
+HEAD {{PROMETHEUS_ALERTMANAGER_HOST}}/-/healthy
+
+###
+
+### Readiness Check - GET
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/-/ready
+Accept: application/json
+
+###
+
+### Readiness Check - HEAD
+HEAD {{PROMETHEUS_ALERTMANAGER_HOST}}/-/ready
+
+###
+
+### Reload Configuration
+POST {{PROMETHEUS_ALERTMANAGER_HOST}}/-/reload
+Content-Type: application/json

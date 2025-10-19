@@ -12,6 +12,7 @@ sort_rank: 7
     * Slack,
     * PagerDuty,
     * email,
+    * ...
     * custom integration -- via the -- generic webhook interface
 
 * Alertmanager's notification templates
@@ -70,11 +71,14 @@ sort_rank: 7
 
 ## KV
 
-`KV` is a set of key/value string pairs used to represent labels and annotations.
+* == key/value string pairs /
+  * uses
+    * represent labels & annotations
+  * syntax
 
-```
-type KV map[string]string
-```
+    ```
+    type KV map[string]string
+    ```
 
 Annotation example containing two annotations:
 
@@ -85,7 +89,8 @@ Annotation example containing two annotations:
 }
 ```
 
-In addition to direct access of data (labels and annotations) stored as KV, there are also methods for sorting, removing, and viewing the LabelSets:
+In addition to direct access of data (labels and annotations) stored as KV, 
+there are also methods for sorting, removing, and viewing the LabelSets:
 
 ### KV methods
 | Name          | Arguments     | Returns  | Notes    |

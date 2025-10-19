@@ -1,0 +1,70 @@
+### Core API
+
+### 1. Get Alertmanager Status
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/status
+Accept: application/json
+
+### 2. Get All Receivers
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/receivers
+Accept: application/json
+
+### 3. Get All Alert groups
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/alerts/groups
+Accept: application/json
+
+### 4. Silence
+### 4.1 Get All Silences
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/silences
+Accept: application/json
+
+### 4.2 Create Silence
+POST {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/silences
+Content-Type: application/json
+
+{
+  "matchers": [
+    {
+      "name": "alertname",
+      "value": "HighCPU",
+      "isRegex": false
+    }
+  ],
+  "startsAt": "2025-10-19T16:40:00Z",
+  "endsAt": "2025-10-20T01:00:00Z",
+  "comment": "Maintenance window",
+  "createdBy": "admin"
+}
+
+### 4.3 Get Specific Silence (replace {silenceId} with actual ID)
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/silence/{{silenceId}}
+Accept: application/json
+
+### 4.4 Delete Silence (replace {silenceId} with actual ID)
+DELETE {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/silence/{{silenceId}}
+
+### 5. Alerts
+### 5.1
+GET {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/alerts
+Accept: application/json
+
+### 5.2 Post Alerts (for testing)
+POST {{PROMETHEUS_ALERTMANAGER_HOST}}/api/v2/alerts
+Content-Type: application/json
+
+[
+  {
+    "labels": {
+      "alertname": "TestAlert",
+      "instance": "localhost:9090",
+      "severity": "warning"
+    },
+    "annotations": {
+      "summary": "Test alert for API testing",
+      "description": "This is a test alert sent via API"
+    },
+    "startsAt": "2025-01-01T00:00:00Z",
+    "endsAt": "2025-01-01T01:00:00Z"
+  }
+]
+
+###

@@ -1663,7 +1663,8 @@ routing_key: <tmpl_string>
 
 ### `<webhook_config>`
 
-The webhook receiver allows configuring a generic receiver.
+* allows
+  * 👀configuring a generic receiver👀
 
 ```yaml
 # Whether to notify about resolved alerts.

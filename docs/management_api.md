@@ -3,9 +3,6 @@ title: Management API
 sort_rank: 9
 ---
 
-Alertmanager provides a set of management API to ease automation and integrations.
-
-
 ### Health check
 
 ```
@@ -13,7 +10,8 @@ GET /-/healthy
 HEAD /-/healthy
 ```
 
-This endpoint always returns 200 and should be used to check Alertmanager health.
+* 's return
+  * 200 OR 500
 
 
 ### Readiness check
@@ -23,8 +21,9 @@ GET /-/ready
 HEAD /-/ready
 ```
 
-This endpoint returns 200 when Alertmanager is ready to serve traffic (i.e. respond to queries).
-
+* 's return
+  * 200 OR 500
+    * == Alertmanager can serve OR NOT traffic (== respond -- to -- queries)
 
 ### Reload
 
@@ -32,6 +31,7 @@ This endpoint returns 200 when Alertmanager is ready to serve traffic (i.e. resp
 POST /-/reload
 ```
 
-This endpoint triggers a reload of the Alertmanager configuration file.
-
-An alternative way to trigger a configuration reload is by sending a `SIGHUP` to the Alertmanager process.
+* allows
+  * reload the Alertmanager configuration file
+* ALTERNATIVE
+  * send a `SIGHUP` -- to the -- Alertmanager process
