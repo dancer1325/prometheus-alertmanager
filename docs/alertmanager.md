@@ -31,7 +31,8 @@ nav_icon: sliders
 ## Silences
 
 * Silences
-  * == mute alerts | given time
+  * == 💡mute alerts | given time💡
+    * ALTHOUGH, ❌NOT interrupt alert evaluation❌
   * way to configure
     * -- based on -- matchers
       * if an incoming alert match ALL silence's matchers -> NO notification sent / that alert
