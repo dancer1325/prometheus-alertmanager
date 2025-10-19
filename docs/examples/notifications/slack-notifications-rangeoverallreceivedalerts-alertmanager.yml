@@ -1,0 +1,6 @@
+receivers:
+  - name: 'default-receiver'
+    slack_configs:
+    - channel: '#alerts'
+      title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+      text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"

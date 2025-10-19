@@ -1,0 +1,13 @@
+groups:
+  - name: prometheus-different-to-zero
+    rules:
+      - alert: PrometheusDifferentToZero
+        expr: rate(prometheus_http_requests_total[5m]) != 0
+        for: 20s
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+          instance: "{{ $labels.instance }}"
+        annotations:
+          summary: "Prometheus different to 0"
+          description: "Prometheus is {{ $value }}%, different to 0"

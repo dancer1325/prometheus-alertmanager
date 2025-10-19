@@ -1,0 +1,14 @@
+{{ define "custom.title" }}
+[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .GroupLabels.SortedPairs.Values | join " " }}
+{{ end }}
+
+{{ define "custom.content" }}
+{{ range .Alerts }}
+🔥 **{{ .Annotations.summary }}**
+📊 **Value:** {{ .Annotations.description }}
+🏷️ **Labels:** {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+⏰ **Started:** {{ .StartsAt.Format "15:04:05" }}
+{{ if .Annotations.runbook_url }}📖 **Runbook:** {{ .Annotations.runbook_url }}{{ end }}
+---
+{{ end }}
+{{ end }}

@@ -17,7 +17,7 @@ sort_rank: 7
 
 * Alertmanager's notification templates
   * 👀-- based on -- [Go templating](http://golang.org/pkg/text/template) system👀 /
-    * ways to evaluated fields
+    * ways to evaluate fields
       * -- as -- text
       * -- as -- HTML
   * uses

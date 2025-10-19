@@ -88,8 +88,8 @@ nav_icon: sliders
       # This has no impact on alerts from Prometheus, as they always include EndsAt.
       [ resolve_timeout: <duration> | default = 5m ]
     
-    # Files from which custom notification template definitions are read.
-    # The last component may use a wildcard matcher, e.g. 'templates/*.tmpl'.
+    # file path -- to -- custom notification template definitions
+    #       last component may use a wildcard matcher -- _Example:_ 'templates/*.tmpl' --
     templates:
       [ - <filepath> ... ]
     

@@ -1,0 +1,7 @@
+receivers:
+  - name: 'team-x'
+    slack_configs:
+      - channel: '#alerts'
+        # Alertmanager templates apply here.
+        text: "<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"
+
