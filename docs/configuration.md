@@ -1690,39 +1690,35 @@ url_file: <filepath>
 [ timeout: <duration> | default = 0s ]
 ```
 
-The Alertmanager
-will send HTTP POST requests in the following JSON format to the configured
-endpoint:
+* JSON format
 
-```
-{
-  "version": "4",
-  "groupKey": <string>,              // key identifying the group of alerts (e.g. to deduplicate)
-  "truncatedAlerts": <int>,          // how many alerts have been truncated due to "max_alerts"
-  "status": "<resolved|firing>",
-  "receiver": <string>,
-  "groupLabels": <object>,
-  "commonLabels": <object>,
-  "commonAnnotations": <object>,
-  "externalURL": <string>,           // backlink to the Alertmanager.
-  "alerts": [
+    ```
     {
+      "version": "4",
+      "groupKey": <string>,              // key identifying the group of alerts (e.g. to deduplicate)
+      "truncatedAlerts": <int>,          // how many alerts have been truncated due to "max_alerts"
       "status": "<resolved|firing>",
-      "labels": <object>,
-      "annotations": <object>,
-      "startsAt": "<rfc3339>",
-      "endsAt": "<rfc3339>",
-      "generatorURL": <string>,      // identifies the entity that caused the alert
-      "fingerprint": <string>        // fingerprint to identify the alert
-    },
-    ...
-  ]
-}
-```
+      "receiver": <string>,
+      "groupLabels": <object>,
+      "commonLabels": <object>,
+      "commonAnnotations": <object>,
+      "externalURL": <string>,           // backlink to the Alertmanager.
+      "alerts": [
+        {
+          "status": "<resolved|firing>",
+          "labels": <object>,
+          "annotations": <object>,
+          "startsAt": "<rfc3339>",
+          "endsAt": "<rfc3339>",
+          "generatorURL": <string>,      // identifies the entity that caused the alert
+          "fingerprint": <string>        // fingerprint to identify the alert
+        },
+        ...
+      ]
+    }
+    ```
 
-There is a list of
-[integrations](https://prometheus.io/docs/operating/integrations/#alertmanager-webhook-receiver) with
-this feature.
+* [integrations / support it](https://prometheus.io/docs/operating/integrations/#alertmanager-webhook-receiver)
 
 ### `<wechat_config>`
 
