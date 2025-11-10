@@ -6,13 +6,13 @@ services:
       - "9093:9093"
     volumes:
       # 1. Grouping
-      # - ./alertmanager-grouping-demo.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager-grouping-demo.yml:/etc/alertmanager/alertmanager.yml
 
       # 2. Inhibition
       #- ./alertmanager-inhibition-demo.yml:/etc/alertmanager/alertmanager.yml
 
       # 3. Silence
-      - ./alertmanager-silenece-demo.yml:/etc/alertmanager/alertmanager.yml
+      #- ./alertmanager-silenece-demo.yml:/etc/alertmanager/alertmanager.yml
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
